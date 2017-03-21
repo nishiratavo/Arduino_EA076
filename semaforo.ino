@@ -10,95 +10,37 @@
 #define GREEN_P 8
 
 int count = 0;
-int button_flag = 0;
-int button_count = 0;
-int flag = 0;
+int pedestrian_flag = 0;
+int pedestrian_count = 0;
 int toogle = 0;
-int light_flag = 0;
-int mean_light = 410;
-int light_count_night = 0;
-int light_count_day = 0;
-int flag_save_count_night = 0;
-int flag_save_count_day = 0;
-int flag_day = 0;
+int night_flag = 0;
+unsigned int timer_to_wake = 0;
+unsigned int timer_to_sleep = 0;
 
 
 void ISR_button()
 {
-  button_flag = 1;
+  pedestrian_flag = 1;
+  pedestrian_count = count;
   digitalWrite(13,HIGH);
 }
 
 
 void ISR_timer()
 {
-  if(analogRead(A0) < 400)
+  
+  if (analogRead(A0) > 400)
   {
-    if(flag_save_count_night == 0)
-    {
-      light_count_night = count;
-      flag_save_count_night = 1;
-    }
-    mean_light = mean_light + analogRead(A0);
-    if(count == light_count_night + 5)
-    {
-      mean_light = mean_light/5;
-    }
-    
-    if(mean_light < 400 && count == light_count_night + 5)
-    {
-      light_flag = 1;
-      flag_day = 1;
-      flag_save_count_day = 0;
-      count = 0;
-    }
-    else if(count == light_count_night + 5)
-    {
-      flag_save_count_night = 0;
-      mean_light = 0;
-    }
+    timer_to_wake = 0;
+    timer_to_sleep += 1;
+  }
+  else
+  {
+    timer_to_sleep = 0;
+    timer_to_wake += 1;
   }
 
-  else if(count == light_count_night + 5)
-    {
-      flag_save_count_night = 0;
-      mean_light = 0;
-    }
-  
-  else if(analogRead(A0) > 400 && flag_day == 1)
-  {
-    if(flag_save_count_day == 0)
-    {
-      light_count_day = count;
-      flag_save_count_day = 1;
-      mean_light = 0;
-    }
-    mean_light = mean_light + analogRead(A0);
-    if(count == light_count_day + 5)
-    {
-      mean_light = mean_light/5;
-    }
-    
-    if(mean_light > 400 && count == light_count_day + 5)
-    {
-      light_flag = 0;
-      count = 0;
-      flag_save_count_night = 0;
-      flag_day = 0;
-    }
-    else if(count == light_count_day + 5)
-    {
-      flag_save_count_day = 0;
-      mean_light = 0;
-    }
-  }
-  else if(count == light_count_day + 5)
-    {
-      flag_save_count_day = 0;
-      mean_light = 0;
-    }
-  
-  if(button_flag == 0 && light_flag == 0)
+  if(pedestrian_flag == 0 && night_flag == 0)
   {
     switch(count)
     {
@@ -125,27 +67,23 @@ void ISR_timer()
         break;
      } 
   }
-  else if(light_flag == 0 && button_flag == 1)
+  else if(pedestrian_flag == 1 && night_flag == 0)
     {
-      if(flag == 0)
-      {
-        button_count = count;
-        flag = 1;
-      }
-      if(count == button_count + 5)
-      {
-        digitalWrite(RED_T,LOW);
-        digitalWrite(GREEN_T,LOW);
-        digitalWrite(YELLOW,HIGH);
-      }
-      if(count == button_count + 10)
-      {
-        digitalWrite(YELLOW,LOW);
-        digitalWrite(RED_T,HIGH);
-        digitalWrite(GREEN_P,HIGH);
-        digitalWrite(RED_P,LOW);
-      }
-      if(count >= button_count + 20 && count <= button_count + 25)
+        if(count == pedestrian_count + 5)
+        {
+          digitalWrite(RED_T,LOW);
+          digitalWrite(GREEN_T,LOW);
+          digitalWrite(YELLOW,HIGH);
+          
+        }
+        if(count == pedestrian_count + 10)
+        {
+          digitalWrite(YELLOW,LOW);
+          digitalWrite(RED_T,HIGH);
+          digitalWrite(GREEN_P,HIGH);
+          digitalWrite(RED_P,LOW);
+        }
+      if(count >= pedestrian_count + 20 && count <= pedestrian_count + 25)
       {
         if(toogle == 0)
         {
@@ -157,18 +95,17 @@ void ISR_timer()
           digitalWrite(GREEN_P,HIGH);
           toogle = 0;
         }
-        if(count == button_count + 25)
+        if(count == pedestrian_count + 25)
         {
           digitalWrite(GREEN_P,LOW);
           digitalWrite(RED_P,HIGH);
           count = -1;
-          button_count = 0;
-          button_flag = 0;
-          flag = 0;
+          pedestrian_count = 0;
+          pedestrian_flag = 0;
         }
       }  
     }
-    else if(light_flag == 1)
+    else if(night_flag == 1)
     {
       digitalWrite(RED_T,LOW);
       digitalWrite(RED_P,LOW);
@@ -184,7 +121,7 @@ void ISR_timer()
           digitalWrite(YELLOW,HIGH);
           toogle = 0;
         }
-      
+      count = -1;
     }
     count += 1;
   }
@@ -208,6 +145,16 @@ void setup() {
 
 void loop() {
   // put your main code here, to run repeatedly:
+  if (timer_to_sleep > 5)
+  {
+    night_flag = 1;
+    digitalWrite(13,HIGH);
+  }
+  else if(timer_to_wake > 5)
+  {
+    night_flag = 0;
+  }
+
   
 
 }
