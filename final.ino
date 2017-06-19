@@ -29,6 +29,7 @@ void ISR_button() // external interrupt
 		note5 = 1;
 	}
 	else if ((digitalRead(8) == LOW) && (note5 == 1)) // turn note 500Hz off
+	{ 
 	
 		note5 = 0;
 	}
