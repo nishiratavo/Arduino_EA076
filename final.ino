@@ -14,22 +14,22 @@ void ISR_button() // external interrupt
 	// Press the pushbutton one time to turn note on and another time to turn off
 
 	//----------------------------------------------------
-	if ((digitalRead(7) == LOW) && (note6 == 0)) // turn note 440Hz on
+	if ((digitalRead(7) == LOW) && (note6 == 0)) // turn note 333Hz on
 	{
 		note6 = 1;
 	}
-	else if ((digitalRead(7) == LOW) && (note6 == 1)) // turn note 440Hz off
+	else if ((digitalRead(7) == LOW) && (note6 == 1)) // turn note 333Hz off
 	{
 		note6 = 0;
 	}
 	//---------------------------------------------------
 
-	if ((digitalRead(8) == LOW) && (note5 == 0)) // turn note 493Hz on
+	if ((digitalRead(8) == LOW) && (note5 == 0)) // turn note 500Hz on
 	{
 		note5 = 1;
 	}
-	else if ((digitalRead(8) == LOW) && (note5 == 1)) // turn note 493Hz off
-	{
+	else if ((digitalRead(8) == LOW) && (note5 == 1)) // turn note 500Hz off
+	
 		note5 = 0;
 	}
 
