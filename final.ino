@@ -42,7 +42,7 @@ void ISR_button() // external interrupt
 
 void ISR_timer() // interrupt occurs every 100us
 {
-	if (note6 == 1) // ~= 440 Hz
+	if (note6 == 1) // ~= 333 Hz
 	{
 		// conditional setting the square wave frequency
 		if (count6 < 15)
@@ -66,7 +66,7 @@ void ISR_timer() // interrupt occurs every 100us
 	}
 	//-------------------------------------------
 
-	if (note5 == 1) //  ~= 493 Hz
+	if (note5 == 1) //  ~= 500 Hz
 	{
 		// conditional setting the square wave frequency
 		if (count5 < 10)
